@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from Speaker import Speaker
+from sessionmodel.Speaker import Speaker
 
 
 @dataclass

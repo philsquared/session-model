@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 
-from Colour import Colour
-from Link import Link
+from sessionmodel.Colour import Colour
+from sessionmodel.Link import Link
 
 
 @dataclass
