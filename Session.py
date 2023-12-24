@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from sessionmodel.Speaker import Speaker
 
@@ -8,8 +8,9 @@ class Session:
     id: str
     title: str
     abstract: str
-    outline: str
-    length: str
-    audience: [str]
-    tags: [str]
-    speakers: [Speaker]
+    length: str | None
+    audience: list[str]
+    tags: list[str]
+    speakers: list[Speaker]
+    outline: str | None
+    type: str = "session"

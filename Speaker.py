@@ -11,7 +11,7 @@ class Speaker:
     bio: str
 
     # These fields may be missing initially
-    links: [Link] = field(default_factory=list)  # Social media/ website/ blog etc
+    links: [Link]   # Social media/ website/ blog etc
     profile_pic: str | None = None
     header_image: str | None = None
     tint_colour: Colour | None = None
