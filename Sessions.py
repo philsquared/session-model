@@ -4,7 +4,9 @@ from dataclasses import asdict
 import yaml
 
 from objectipy.objectipy import dict_to_object
+from sessionmodel.Link import Link
 from sessionmodel.Session import Session
+from sessionmodel.Speaker import Speaker
 
 
 def _sessions_to_dict(sessions: [Session]) -> list:
@@ -43,4 +45,14 @@ def load_sessions(filename: str) -> [Session]:
     """
     data = load_yaml(filename)
     sessions = [dict_to_object(session_data, Session) for session_data in data]
+
+    #!TBD: once dict_to_objects recurses objects we can remove the next bit:
+    for session in sessions:
+        speakers = []
+        for speaker_data in session.speakers:
+            links = [dict_to_object(link_data, Link) for link_data in speaker_data["links"]]
+            speaker_data["links"] = links
+            speaker = dict_to_object(speaker_data, Speaker)
+            speakers.append(speaker)
+        session.speakers = speakers
     return sessions
