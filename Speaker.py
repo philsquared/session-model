@@ -6,6 +6,7 @@ from sessionmodel.Link import Link
 
 @dataclass
 class Speaker:
+    id: str
     name: str
     friendly_name: str
     bio: str
