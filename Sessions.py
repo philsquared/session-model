@@ -28,7 +28,7 @@ def save_yaml(filename: str, data: dict):
     Writes a dictionary to a YAML file
     """
     with codecs.open(filename, "w", "utf-8") as f:
-        yaml.dump(data, f, default_flow_style=False)
+        yaml.dump(data, f, default_flow_style=False, sort_keys=False)
 
 
 def save_sessions(filename: str, sessions: [Session]):
