@@ -35,7 +35,12 @@ def save_sessions(filename: str, sessions: [Session]):
     """
     Writes an array of sessions to a YAML file
     """
+    sessions = list(sessions)
+    sessions.sort(key=lambda session: session.id)
     data = _sessions_to_dict(sessions)
+    # with codecs.open(filename, "w", "utf-8") as f:
+    #     for session in sessions:
+    #         yaml.dump(data, f, default_flow_style=False, sort_keys=False)
     save_yaml(filename, data)
 
 
