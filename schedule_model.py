@@ -76,6 +76,8 @@ class Session:
 
     day: list = field(default_factory=list)  # Set after init
 
+    _slug: str = None
+
     @property
     def is_workshop(self) -> bool:
         return self.data.type == "workshop"
@@ -116,8 +118,13 @@ class Session:
         return render_markdown(self.data.title, clean=True, strip_outer_p_tag=True)
 
     @property
-    def title_as_slug(self):
-        return slugify(self.data.title)
+    def slug(self):
+        if not self._slug:
+            if self.data.slug:
+                self._slug = self.data.slug
+            else:
+                self._slug = slugify(self.data.title)
+        return self._slug
 
     @property
     def abstract_as_html(self) -> str:
@@ -163,7 +170,7 @@ class Session:
             date_common = " ".join(date1_parts[distinct_len:])
             return f"{self.day[0].day}, {date1} - {self.day[1].day}, {date2} {date_common}"
         else:
-            raise Exception(f"Session, {self.title_as_slug} has no Day field")
+            raise Exception(f"Session, {self.slug} has no Day field")
 
 
 # A timeslot for a room - usually  just one session, but may be multiple

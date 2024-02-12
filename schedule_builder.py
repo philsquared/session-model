@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+
 import yaml
 
 from sessionmodel.schedule_model import Session, Timeslot, Schedule, Day, SessionSlot, Time, WorkshopGroup
@@ -7,8 +9,17 @@ from sessionmodel.Sessions import load_sessions
 
 
 schedule = None
-session_by_id = {}
 session_by_slug = {}
+reusable_slugs = {}
+
+
+@dataclass
+class ReusableSlug:
+    slug: str
+    count: int = 0
+
+    def __str__(self):
+        return f"{self.slug}-{self.count}"
 
 
 class ScheduleBuilder:
@@ -26,14 +37,20 @@ class ScheduleBuilder:
                 data=session_info,
                 start_time=times[0],
                 end_time=times[1])
-            if session_id not in session_by_id:
-                session_by_id[session_id] = session
-                slug = session.title_as_slug
-                if slug in session_by_slug:
+            slug = session.slug
+            if session_info.reusable:
+                if (reusable_slug := reusable_slugs.get(slug)) is None:
+                    reusable_slug = ReusableSlug(slug)
+                    reusable_slugs[slug] = reusable_slug
+                reusable_slug.count += 1
+                session._slug = (slug := str(reusable_slug))
+            if slug in session_by_slug:
+                if session_info.multi:
+                    session = session_by_slug[slug]
+                else:
                     raise Exception(f"Two sessions have the same slug, '{slug}'")
-                session_by_slug[slug] = session
             else:
-                session = session_by_id[session_id]
+                session_by_slug[slug] = session
             return session
 
         if isinstance(session_slot_entry, dict):
