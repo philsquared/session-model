@@ -21,6 +21,7 @@ class ReusableSlug:
     def __str__(self):
         return f"{self.slug}-{self.count}"
 
+all_speakers = {}
 
 class ScheduleBuilder:
     def __init__(self, session_data_by_id: dict):
@@ -121,7 +122,7 @@ class ScheduleBuilder:
         return days
 
 
-def load_schedule(schedule_path: str, session_data_path: str, fixed_session_data_path: str, workshops_only=False) -> Schedule:
+def load_schedule(schedule_path: str | None, session_data_path: str, fixed_session_data_path: str | None, workshops_only=False):
     sessions = load_sessions(session_data_path)
 
     if fixed_session_data_path is not None:
@@ -135,9 +136,15 @@ def load_schedule(schedule_path: str, session_data_path: str, fixed_session_data
             strip_outer_p_tag=True,
             embedded_code=True,
             remove_elements=["h1", "h2", "h3"])
+        for speaker in session.speakers:
+            if speaker.id not in all_speakers:
+                all_speakers[speaker.id] = speaker
 
     session_data_by_id = {session.id: session for session in sessions}
     builder = ScheduleBuilder(session_data_by_id)
+
+    if schedule_path is None:
+        return
 
     with open(schedule_path, 'r') as f:
         data = yaml.safe_load(f)
