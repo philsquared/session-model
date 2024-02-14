@@ -3,6 +3,7 @@ from dataclasses import asdict
 
 import yaml
 
+from glassware.logging import log_error
 from objectipy.objectipy import dict_to_object
 from sessionmodel.Link import Link
 from sessionmodel.Session import Session
@@ -57,7 +58,10 @@ def load_sessions(filename: str) -> [Session]:
         for speaker_data in session.speakers:
             links = [dict_to_object(link_data, Link) for link_data in speaker_data["links"]]
             speaker_data["links"] = links
-            speaker = dict_to_object(speaker_data, Speaker)
-            speakers.append(speaker)
+            if "bio" not in speaker_data:
+                log_error(f"*** No bio found for speaker {speaker_data.get('name')} - skipping")
+            else:
+                speaker = dict_to_object(speaker_data, Speaker)
+                speakers.append(speaker)
         session.speakers = speakers
     return sessions
