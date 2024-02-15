@@ -130,12 +130,6 @@ def load_schedule(schedule_path: str | None, session_data_path: str, fixed_sessi
         sessions = sessions + fixed_sessions
 
     for session in sessions:
-        session.title = render_markdown(
-            session.title,
-            clean=True,
-            strip_outer_p_tag=True,
-            embedded_code=True,
-            remove_elements=["h1", "h2", "h3"])
         for speaker in session.speakers:
             if speaker.id not in all_speakers:
                 all_speakers[speaker.id] = speaker

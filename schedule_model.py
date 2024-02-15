@@ -115,7 +115,12 @@ class Session:
 
     @property
     def title_as_html(self) -> str:
-        return render_markdown(self.data.title, clean=True, strip_outer_p_tag=True)
+        return render_markdown(
+            self.data.title,
+            clean=True,
+            strip_outer_p_tag=True,
+            embedded_code=True,
+            remove_elements=["h1", "h2", "h3"])
 
     @property
     def slug(self):
