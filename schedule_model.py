@@ -42,7 +42,7 @@ class Speaker:
 
     @property
     def bio_as_html(self):
-        return render_markdown(self.data.bio, clean=True, strip_outer_p_tag=True)
+        return render_markdown(self.data.bio, clean=True, strip_outer_p_tag=True, linkify=True)
 
     @property
     def profile_pic_path(self):
@@ -120,6 +120,7 @@ class Session:
             clean=True,
             strip_outer_p_tag=True,
             embedded_code=True,
+            linkify=True,
             remove_elements=["h1", "h2", "h3"])
 
     @property
