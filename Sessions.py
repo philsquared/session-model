@@ -45,19 +45,19 @@ def save_sessions(filename: str, sessions: [Session]):
     save_yaml(filename, data)
 
 
-def load_sessions(filename: str) -> [Session]:
+def parse_sessions(sessions_data: [dict]) -> [Session]:
     """
-    Reads an array of sessions from a YAML file
+    Parses an array of session data dicts into Session objects
     """
-    data = load_yaml(filename)
-    sessions = [dict_to_object(session_data, Session) for session_data in data]
+    sessions = [dict_to_object(session_data, Session) for session_data in sessions_data]
 
     #!TBD: once dict_to_objects recurses objects we can remove the next bit:
     for session in sessions:
         speakers = []
         for speaker_data in session.speakers:
-            links = [dict_to_object(link_data, Link) for link_data in speaker_data["links"]]
-            speaker_data["links"] = links
+            if links_data := speaker_data.get("links"):
+                links = [dict_to_object(link_data, Link) for link_data in links_data]
+                speaker_data["links"] = links
             if "bio" not in speaker_data:
                 log_error(f"*** No bio found for speaker {speaker_data.get('name')} - skipping")
             else:
@@ -65,3 +65,12 @@ def load_sessions(filename: str) -> [Session]:
                 speakers.append(speaker)
         session.speakers = speakers
     return sessions
+
+
+def load_sessions(filename: str) -> [Session]:
+    """
+    Reads an array of sessions from a YAML file and parses them into Session objects
+    """
+    data = load_yaml(filename)
+    return parse_sessions(data)
+

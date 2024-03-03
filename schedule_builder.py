@@ -4,9 +4,8 @@ import yaml
 
 from sessionmodel.schedule_model import Session, Timeslot, Schedule, Day, SessionSlot, Time, WorkshopGroup
 from pykyll.markdown import render_markdown
-from pykyll.utils import format_longdate
-from sessionmodel.Sessions import load_sessions
-
+from pykyll.utils import format_longdate, dict_merge
+from sessionmodel.Sessions import load_sessions, load_yaml, parse_sessions
 
 schedule = None
 session_by_slug = {}
@@ -22,6 +21,7 @@ class ReusableSlug:
         return f"{self.slug}-{self.count}"
 
 all_speakers = {}
+
 
 class ScheduleBuilder:
     def __init__(self, session_data_by_id: dict):
@@ -122,19 +122,40 @@ class ScheduleBuilder:
         return days
 
 
-def load_schedule(schedule_path: str | None, session_data_path: str, fixed_session_data_path: str | None):
-    sessions = load_sessions(session_data_path)
+def get_speakers_as_dict(session: dict) -> {str: dict}:
+    if speakers := session.get("speakers"):
+        return {speaker["id"]: speaker for speaker in speakers}
+    else:
+        return {}
 
-    if fixed_session_data_path is not None:
-        fixed_sessions = load_sessions(fixed_session_data_path)
-        sessions = sessions + fixed_sessions
 
-    for session in sessions:
+def load_session_data(paths: [str]) -> {str: Session}:
+    all_session_data = {}
+    for path in paths:
+        session_data = load_yaml(path)
+        for session in session_data:
+            if (session_id := session.get("id")) is None:
+                raise Exception(f"session data has no ID:\n{session}")
+            if existing_session := all_session_data.get(session_id):
+                existing_speakers = get_speakers_as_dict(existing_session)
+                new_speakers = get_speakers_as_dict(session)
+                speakers = dict_merge(existing_speakers, new_speakers)
+                session = dict_merge(existing_session, session)
+                if speakers:
+                    session["speakers"] = [s for s in speakers.values()]
+            all_session_data[session_id] = session
+
+    return {session.id: session for session in parse_sessions(all_session_data.values())}
+
+
+def load_schedule(schedule_path: str | None, session_data_paths: [str]):
+    session_data_by_id = load_session_data(session_data_paths)
+
+    for session in session_data_by_id.values():
         for speaker in session.speakers:
             if speaker.id not in all_speakers:
                 all_speakers[speaker.id] = speaker
 
-    session_data_by_id = {session.id: session for session in sessions}
     builder = ScheduleBuilder(session_data_by_id)
 
     if schedule_path is None:
