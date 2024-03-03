@@ -122,7 +122,7 @@ class ScheduleBuilder:
         return days
 
 
-def load_schedule(schedule_path: str | None, session_data_path: str, fixed_session_data_path: str | None, workshops_only=False):
+def load_schedule(schedule_path: str | None, session_data_path: str, fixed_session_data_path: str | None):
     sessions = load_sessions(session_data_path)
 
     if fixed_session_data_path is not None:
@@ -142,15 +142,6 @@ def load_schedule(schedule_path: str | None, session_data_path: str, fixed_sessi
 
     with open(schedule_path, 'r') as f:
         data = yaml.safe_load(f)
-
-    if workshops_only:
-        days = data["days"]
-        workshop_days = []
-        for day in days:
-            if "workshop" in day["label"]:
-                workshop_days.append(day)
-        data["days"] = workshop_days
-
 
     global schedule
     schedule = Schedule(
