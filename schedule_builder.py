@@ -167,7 +167,7 @@ def load_schedule(schedule_path: str | None, session_data_paths: [str]):
     global schedule
     schedule = Schedule(
         room_names=data["room_names"],
-        default_header=data["default_header"],
+        default_header=data.get("default_header"),
         days=builder.read_days(data["days"]))
 
     workshops_seen = set()

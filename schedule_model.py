@@ -236,6 +236,6 @@ class WorkshopGroup:
 @dataclass
 class Schedule:
     room_names: [str]
-    default_header: str
+    default_header: str | None
     days: [Day]
     workshop_groups: [WorkshopGroup] = field(default_factory=list)
