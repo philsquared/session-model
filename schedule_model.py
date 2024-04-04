@@ -151,6 +151,8 @@ class Session:
 
     @property
     def header_image(self):
+        if self.data.header_image:
+            return os.path.join("/static", "img", self.data.header_image)
         image = None
         for speaker in self.speakers:
             if speaker.header_image_path is not None:
