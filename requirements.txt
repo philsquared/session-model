@@ -1,3 +1,3 @@
 pyyaml==6.0.1
 
-# Also depends on pykyll
+# Also depends on pykyll, objectipy and (optionally) glassware (private repo) as peer submodules
