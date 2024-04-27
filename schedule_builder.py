@@ -20,7 +20,9 @@ class ReusableSlug:
     def __str__(self):
         return f"{self.slug}-{self.count}"
 
+
 all_speakers = {}
+all_sessions = []
 
 
 class ScheduleBuilder:
@@ -150,8 +152,11 @@ def load_session_data(paths: [str]) -> {str: Session}:
 
 def load_schedule(schedule_path: str | None, session_data_paths: [str]):
     session_data_by_id = load_session_data(session_data_paths)
+    global all_sessions
+    for s in session_data_by_id.values():
+        all_sessions.append(s)
 
-    for session in session_data_by_id.values():
+    for session in all_sessions:
         for speaker in session.speakers:
             if speaker.id not in all_speakers:
                 all_speakers[speaker.id] = speaker

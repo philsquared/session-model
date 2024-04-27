@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
 from sessionmodel.Speaker import Speaker
+from pykyll.markdown import render_markdown
 
 
 @dataclass
@@ -18,3 +19,17 @@ class Session:
     reusable: bool = False  # Session is generic and may be reused, but link to unique pages
     slug: str | None = None
     header_image: str | None = None
+
+    @property
+    def is_workshop(self) -> bool:
+        return self.type == "workshop"
+
+    @property
+    def title_as_html(self) -> str:
+        return render_markdown(
+            self.title,
+            clean=True,
+            strip_outer_p_tag=True,
+            embedded_code=True,
+            linkify=True,
+            remove_elements=["h1", "h2", "h3"])

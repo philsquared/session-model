@@ -3,7 +3,7 @@ from dataclasses import asdict
 
 import yaml
 
-from glassware.logging import log_error
+from .logging import log_error
 from objectipy.objectipy import dict_to_object
 from sessionmodel.Link import Link
 from sessionmodel.Session import Session

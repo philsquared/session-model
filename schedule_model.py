@@ -3,7 +3,7 @@ import os
 from dataclasses import dataclass, field
 from functools import cached_property
 
-from glassware.logging import log_warn
+from .logging import log_warn
 from pykyll.html import slugify, make_description
 from pykyll.markdown import render_markdown
 from pykyll.utils import common_suffix
@@ -80,7 +80,7 @@ class Session:
 
     @property
     def is_workshop(self) -> bool:
-        return self.data.type == "workshop"
+        return self.data.is_workshop
 
     @property
     def duration_in_minutes(self):
@@ -115,13 +115,7 @@ class Session:
 
     @property
     def title_as_html(self) -> str:
-        return render_markdown(
-            self.data.title,
-            clean=True,
-            strip_outer_p_tag=True,
-            embedded_code=True,
-            linkify=True,
-            remove_elements=["h1", "h2", "h3"])
+        return self.data.title_as_html
 
     @property
     def slug(self):
