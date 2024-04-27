@@ -62,7 +62,7 @@ class ScheduleBuilder:
             if not session_slot_data:
                 raise Exception(f"Only 'session_slot' key currently supported, but found: {session_slot_entry.keys()}")
 
-            sessions = [make_session(session_entry["session"], session_entry["time"]) for session_entry in session_slot_data]
+            sessions = [make_session(session_entry["session"], session_entry.get("time") or times) for session_entry in session_slot_data]
             return SessionSlot(index, sessions=sessions)
         else:
             # implicit session_slot - just one, full-length, session
@@ -150,7 +150,7 @@ def load_session_data(paths: [str]) -> {str: Session}:
     return {session.id: session for session in parse_sessions(all_session_data.values())}
 
 
-def load_schedule(schedule_path: str | None, session_data_paths: [str]):
+def load_schedule(schedule_path: str | None, session_data_paths: [str]) -> Schedule | None:
     session_data_by_id = load_session_data(session_data_paths)
     global all_sessions
     for s in session_data_by_id.values():
@@ -164,7 +164,7 @@ def load_schedule(schedule_path: str | None, session_data_paths: [str]):
     builder = ScheduleBuilder(session_data_by_id)
 
     if schedule_path is None:
-        return
+        return None
 
     with open(schedule_path, 'r') as f:
         data = yaml.safe_load(f)
@@ -196,3 +196,4 @@ def load_schedule(schedule_path: str | None, session_data_paths: [str]):
             group = schedule.workshop_groups[-1]
         group.workshops.append(workshop)
 
+    return schedule
