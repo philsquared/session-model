@@ -150,7 +150,7 @@ def load_session_data(paths: [str]) -> {str: Session}:
     return {session.id: session for session in parse_sessions(all_session_data.values())}
 
 
-def load_schedule(schedule_path: str | None, session_data_paths: [str]) -> Schedule | None:
+def load_schedule(schedule_path: str | None, session_data_paths: [str], placeholder_profile: str | None = None) -> Schedule | None:
     session_data_by_id = load_session_data(session_data_paths)
     global all_sessions
     for s in session_data_by_id.values():
@@ -160,6 +160,8 @@ def load_schedule(schedule_path: str | None, session_data_paths: [str]) -> Sched
         for speaker in session.speakers:
             if speaker.id not in all_speakers:
                 all_speakers[speaker.id] = speaker
+                if speaker.profile_pic is None:
+                    speaker.profile_pic = placeholder_profile
 
     builder = ScheduleBuilder(session_data_by_id)
 
