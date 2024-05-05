@@ -26,14 +26,22 @@ class Time:
         return self.min * 60 + self.hour
 
     def __str__(self):
-        return f"{self.hour}:{self.min}"
+        return f"{self.hour:02d}:{self.min:02d}"
 
     def __repr__(self):
-        return f"{self.hour}:{self.min}"
+        return f"{self.hour:02d}:{self.min:02d}"
 
     def __lt__(self, other):
         return (self.hour < other.hour or
                 (self.hour == other.hour) and self.min < other.min)
+
+    def __le__(self, other):
+        return (self.hour < other.hour or
+                (self.hour == other.hour) and self.min <= other.min)
+
+    def __ge__(self, other):
+        return (self.hour > other.hour or
+                (self.hour == other.hour) and self.min >= other.min)
 
 
 @dataclass
@@ -189,6 +197,7 @@ class Session:
 class SessionSlot:
     index: int
     sessions: [Session]
+    times: [Time]
 
     @property
     def is_single(self):

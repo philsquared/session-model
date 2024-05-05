@@ -50,6 +50,7 @@ class ScheduleBuilder:
             if slug in session_by_slug:
                 if session_info.multi:
                     session = session_by_slug[slug]
+                    session.end_time = times[1]
                 else:
                     raise Exception(f"Two sessions have the same slug, '{slug}'")
             else:
@@ -63,10 +64,10 @@ class ScheduleBuilder:
                 raise Exception(f"Only 'session_slot' key currently supported, but found: {session_slot_entry.keys()}")
 
             sessions = [make_session(session_entry["session"], session_entry.get("time") or times) for session_entry in session_slot_data]
-            return SessionSlot(index, sessions=sessions)
+            return SessionSlot(index, sessions=sessions, times=times)
         else:
             # implicit session_slot - just one, full-length, session
-            return SessionSlot(index, sessions=[make_session(session_slot_entry, times)])
+            return SessionSlot(index, sessions=[make_session(session_slot_entry, times)], times=times)
 
     def read_session_slots(self, session_slot_data, times: [Time], live_data: [int]) -> [SessionSlot]:
         return [self.read_session_slot(index, data, times, live == 1) for index, (data, live) in enumerate(zip(session_slot_data, live_data))]
@@ -75,20 +76,28 @@ class ScheduleBuilder:
         timeslots = []
         for time_num, data in enumerate(timeslot_data):
             sessions_data = data["sessions"]
-            times = data["time"]
+            times = [Time(time_str) for time_str in data["time"]]
             live_data = data.get("live") or [0 for _ in sessions_data]
             session_slots = self.read_session_slots(sessions_data, times, live_data)
             times = set(times)
             for rs in session_slots:
                 for s in rs.sessions:
-                    times.add(s.start_time)
-                    times.add(s.end_time)
+                    if s.start_time >= rs.times[0]:
+                        times.add(s.start_time)
+                    if s.end_time <= rs.times[-1]:
+                        times.add(s.end_time)
             times = list(times)
             times.sort()
             for rs in session_slots:
                 for s in rs.sessions:
-                    s.start_time_index = times.index(s.start_time)
-                    s.end_time_index = times.index(s.end_time)
+                    try:
+                        s.start_time_index = times.index(s.start_time)
+                    except:
+                        s.start_time_index = 0
+                    try:
+                        s.end_time_index = times.index(s.end_time)
+                    except:
+                        s.end_time_index = len(times)-1
             timeslot = Timeslot(
                 times=times,
                 type=data.get("type") or "sessions",
