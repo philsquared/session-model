@@ -144,6 +144,14 @@ class Session:
         return [Speaker(s) for s in self.data.speakers]
 
     @property
+    def speaker_image(self):
+        if self.data.speakers:
+            for speaker in self.data.speakers:
+                if speaker.profile_pic and "placeholder" not in speaker.profile_pic:  # !TBD: remove this hard coded string
+                    return speaker.profile_pic
+        return None
+
+    @property
     def header_image(self):
         if self.data.header_image:
             return os.path.join("/static", "img", self.data.header_image)
