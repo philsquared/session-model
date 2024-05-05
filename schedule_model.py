@@ -76,6 +76,7 @@ class Session:
 
     day: list = field(default_factory=list)  # Set after init
 
+    track: {} = field(default_factory=dict)
     _slug: str = None
 
     @property
@@ -243,3 +244,4 @@ class Schedule:
     default_header: str | None
     days: [Day]
     workshop_groups: [WorkshopGroup] = field(default_factory=list)
+    tracks: {} = field(default_factory=dict)

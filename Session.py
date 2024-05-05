@@ -19,6 +19,7 @@ class Session:
     reusable: bool = False  # Session is generic and may be reused, but link to unique pages
     slug: str | None = None
     header_image: str | None = None
+    track: str | None = None
 
     @property
     def is_workshop(self) -> bool:

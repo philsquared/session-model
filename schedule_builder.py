@@ -175,7 +175,8 @@ def load_schedule(schedule_path: str | None, session_data_paths: [str], placehol
     schedule = Schedule(
         room_names=data["room_names"],
         default_header=data.get("default_header"),
-        days=builder.read_days(data["days"]))
+        days=builder.read_days(data["days"]),
+        tracks=data.get("tracks") or {} )
 
     workshops_seen = set()
     workshops = []
@@ -188,6 +189,8 @@ def load_schedule(schedule_path: str | None, session_data_paths: [str], placehol
                         if session.id not in workshops_seen:
                             workshops_seen.add(session.id)
                             workshops.append(session)
+                    if session.data.track:
+                        session.track = schedule.tracks[session.data.track]
 
     for workshop in workshops:
         date_range = workshop.date_range
