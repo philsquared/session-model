@@ -63,7 +63,7 @@ class ScheduleBuilder:
             if not session_slot_data:
                 raise Exception(f"Only 'session_slot' key currently supported, but found: {session_slot_entry.keys()}")
 
-            sessions = [make_session(session_entry["session"], session_entry.get("time") or times) for session_entry in session_slot_data]
+            sessions = [make_session(session_entry["session"], [Time(time) for time in session_entry.get("time")] or times) for session_entry in session_slot_data]
             return SessionSlot(index, sessions=sessions, times=times)
         else:
             # implicit session_slot - just one, full-length, session
