@@ -127,6 +127,10 @@ class Session:
         return self.data.title_as_html
 
     @property
+    def escaped_title(self) -> str:
+        return self.data.title_as_html
+
+    @property
     def slug(self):
         if not self._slug:
             if self.data.slug:
