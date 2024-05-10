@@ -3,7 +3,7 @@ from dataclasses import asdict
 
 import yaml
 
-from .logging import log_error
+from .logging import log_warn
 from objectipy.objectipy import dict_to_object
 from sessionmodel.Link import Link
 from sessionmodel.Session import Session
@@ -59,10 +59,10 @@ def parse_sessions(sessions_data: [dict]) -> [Session]:
                 links = [dict_to_object(link_data, Link) for link_data in links_data]
                 speaker_data["links"] = links
             if "bio" not in speaker_data:
-                log_error(f"*** No bio found for speaker {speaker_data.get('name')} - skipping")
-            else:
-                speaker = dict_to_object(speaker_data, Speaker)
-                speakers.append(speaker)
+                speaker_data["bio"] = "bio coming soon ..."
+                log_warn(f"*** No bio found for speaker {speaker_data.get('name')} - defaulting")
+            speaker = dict_to_object(speaker_data, Speaker)
+            speakers.append(speaker)
         session.speakers = speakers
     return sessions
 
