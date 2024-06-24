@@ -92,6 +92,18 @@ class Session:
         return self.data.is_workshop
 
     @property
+    def is_break(self) -> bool:
+        return self.data.type == "break"
+
+    @property
+    def is_keynote(self) -> bool:
+        return self.data.type == "keynote"
+
+    @property
+    def is_sponsored(self) -> bool:
+        return self.data.type == "sponsored"
+
+    @property
     def duration_in_minutes(self):
         return self.end_time.total_minutes - self.start_time.total_minutes
 
