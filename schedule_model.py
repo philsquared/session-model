@@ -128,6 +128,15 @@ class Session:
                 return ", ".join(names[0:-2]) + f" & {names[-1]}"
 
     @property
+    def title_prefix(self):
+        if self.is_keynote:
+            return "KEYNOTE: "
+        elif self.is_sponsored:
+            return "SPONSORED: "
+        else:
+            return ""
+
+    @property
     def title_with_names(self):
         if self.data.speakers:
             return f"{self.data.title} - {self.speaker_names}"
