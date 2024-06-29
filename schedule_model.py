@@ -56,9 +56,9 @@ class Speaker:
     def profile_pic_path(self):
         # !TBD: extract the year
         if self.data.profile_pic:
-            return os.path.join("/static", "img", "profiles", "2024", self.data.profile_pic )
+            return os.path.join("/static", "img", "profiles", "2024", self.data.profile_pic)
         else:
-            return None
+            return os.path.join("/static", "img", "profiles", "placeholder_face.png")
 
     @property
     def header_image_path(self):
