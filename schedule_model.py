@@ -36,12 +36,16 @@ class Time:
                 (self.hour == other.hour) and self.min < other.min)
 
     def __le__(self, other):
-        return (self.hour < other.hour or
-                (self.hour == other.hour) and self.min <= other.min)
+        return self.hour < other.hour or (self.hour == other.hour and self.min <= other.min)
 
     def __ge__(self, other):
-        return (self.hour > other.hour or
-                (self.hour == other.hour) and self.min >= other.min)
+        return self.hour > other.hour or (self.hour == other.hour and self.min >= other.min)
+
+    def __eq__(self, other):
+        return  self.hour == other.hour and self.min == other.min
+
+    def __hash__(self):
+        return self.__str__().__hash__()
 
 
 @dataclass
@@ -223,11 +227,12 @@ class SessionSlot:
     index: int
     sessions: [Session]
     times: [Time]
+    start_time_index: int = 0
+    end_time_index: int = 1
 
     @property
     def is_single(self):
         return len(self.sessions) == 1
-
 
 @dataclass
 class Timeslot:

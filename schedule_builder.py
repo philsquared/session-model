@@ -64,10 +64,19 @@ class ScheduleBuilder:
                 raise Exception(f"Only 'session_slot' key currently supported, but found: {session_slot_entry.keys()}")
 
             sessions = [make_session(session_entry["session"], [Time(time) for time in session_entry.get("time")] or times) for session_entry in session_slot_data]
-            return SessionSlot(index, sessions=sessions, times=times)
         else:
             # implicit session_slot - just one, full-length, session
-            return SessionSlot(index, sessions=[make_session(session_slot_entry, times)], times=times)
+            sessions = [make_session(session_slot_entry, times)]
+
+        all_times = set()
+        for session in sessions:
+            if session.start_time >= times[0]:
+                all_times.add(session.start_time)
+            if session.end_time <= times[1]:
+                all_times.add(session.end_time)
+        all_times = sorted(all_times)
+
+        return SessionSlot(index, sessions=sessions, times=all_times)
 
     def read_session_slots(self, session_slot_data, times: [Time], live_data: [int]) -> [SessionSlot]:
         return [self.read_session_slot(index, data, times, live == 1) for index, (data, live) in enumerate(zip(session_slot_data, live_data))]
@@ -89,6 +98,8 @@ class ScheduleBuilder:
             times = list(times)
             times.sort()
             for rs in session_slots:
+                rs.start_time_index = times.index(rs.times[0])
+                rs.end_time_index = times.index(rs.times[-1])
                 for s in rs.sessions:
                     try:
                         s.start_time_index = times.index(s.start_time)
