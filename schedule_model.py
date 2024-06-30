@@ -190,6 +190,10 @@ class Session:
         return None
 
     @property
+    def single_day(self) -> bool:
+        return len(self.day) == 1
+
+    @property
     def header_image(self):
         if self.data.header_image:
             return os.path.join("/static", "img", self.data.header_image)
@@ -204,7 +208,7 @@ class Session:
 
     @property
     def date_range(self):
-        if len(self.day) == 1:
+        if self.single_day:
             return f"{self.day[0].day}, {self.day[0].date_str}"
         elif len(self.day) > 1:
             date1 = self.day[0].date_str
@@ -219,6 +223,17 @@ class Session:
             return f"{self.day[0].day}, {date1} - {self.day[1].day}, {date2} {date_common}"
         else:
             raise Exception(f"Session, {self.slug} has no Day field")
+
+    @property
+    def full_time_desc(self) -> str:
+        return f"{self.start_time}-{self.end_time}, {self.date_range}"
+
+    @property
+    def short_time_desc(self) -> str:
+        if self.single_day:
+            return f"{self.start_time}-{self.end_time}"
+        else:
+            return f"{self.start_time}-{self.end_time}, {self.date_range}"
 
 
 # A timeslot for a room - usually  just one session, but may be multiple
