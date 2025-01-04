@@ -7,7 +7,7 @@ from pykyll.markdown import render_markdown
 from pykyll.utils import format_longdate, dict_merge
 from sessionmodel.Sessions import load_sessions, load_yaml, parse_sessions
 
-schedule = None
+_schedules = {}
 
 @dataclass
 class ReusableSlug:
@@ -185,9 +185,9 @@ def load_schedule(schedule_path: str | None, session_data_paths: [str], placehol
     with open(schedule_path, 'r') as f:
         data = yaml.safe_load(f)
 
-    global schedule
+    year = data["year"]
     schedule = Schedule(
-        year=data["year"],
+        year=year,
         room_names=data["room_names"],
         default_header=data.get("default_header"),
         days=builder.read_days(data["days"]),
@@ -218,4 +218,9 @@ def load_schedule(schedule_path: str | None, session_data_paths: [str], placehol
             group = schedule.workshop_groups[-1]
         group.workshops.append(workshop)
 
+    _schedules[str(year)] = schedule
     return schedule
+
+
+def get_schedule(year: int) -> Schedule:
+    return _schedules[str(year)]
