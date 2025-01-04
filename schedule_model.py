@@ -2,6 +2,7 @@ import datetime
 import os
 from dataclasses import dataclass, field
 from functools import cached_property
+from typing import Any
 
 from .logging import log_warn
 from pykyll.html import slugify, make_description
@@ -48,9 +49,10 @@ class Time:
         return self.__str__().__hash__()
 
 
-@dataclass
 class Speaker:
-    data: SessionModel.Speaker
+
+    def __init__(self, data: SessionModel.Speaker):
+        self.data = data
 
     @property
     def bio_as_html(self):
@@ -58,6 +60,7 @@ class Speaker:
 
     @property
     def profile_pic_path(self):
+        assert(False)
         # !TBD: extract the year
         if self.data.profile_pic:
             return os.path.join("/static", "img", "profiles", "2024", self.data.profile_pic)
@@ -66,6 +69,7 @@ class Speaker:
 
     @property
     def header_image_path(self):
+        assert(False)
         # !TBD: extract the year
         if self.data.header_image:
             return os.path.join("/static", "img", "profiles", "2024", self.data.header_image )
@@ -90,6 +94,8 @@ class Session:
 
     track: {} = field(default_factory=dict)
     _slug: str = None
+
+    schedule: Any = None
 
     @property
     def is_workshop(self) -> bool:
@@ -196,12 +202,12 @@ class Session:
     @property
     def header_image(self):
         if self.data.header_image:
-            return os.path.join("/static", "img", self.data.header_image)
+            return self.data.header_image
         image = None
         for speaker in self.speakers:
-            if speaker.header_image_path is not None:
+            if speaker.data.header_image is not None:
                 if image is None:
-                    image = os.path.join("/static", "img", "profiles", "2024", speaker.header_image_path)
+                    image = speaker.data.header_image
                 else:
                     log_warn("Multiple speakers have header images - selecting the first one")
         return image
@@ -294,6 +300,7 @@ class WorkshopGroup:
 
 @dataclass
 class Schedule:
+    year: int
     room_names: [str]
     default_header: str | None
     days: [Day]

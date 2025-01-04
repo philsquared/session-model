@@ -193,6 +193,7 @@ def load_schedule(schedule_path: str | None, session_data_paths: [str], placehol
 
     global schedule
     schedule = Schedule(
+        year=data["year"],
         room_names=data["room_names"],
         default_header=data.get("default_header"),
         days=builder.read_days(data["days"]),
@@ -204,6 +205,7 @@ def load_schedule(schedule_path: str | None, session_data_paths: [str], placehol
         for timeslot in day.timeslots:
             for session_slots in timeslot.session_slots:
                 for session in session_slots.sessions:
+                    session.schedule = schedule
                     session.day.append(day)
                     if session.is_workshop:
                         if session.id not in workshops_seen:
