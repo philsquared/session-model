@@ -61,20 +61,12 @@ class Speaker:
     @property
     def profile_pic_path(self):
         assert(False)
-        # !TBD: extract the year
-        if self.data.profile_pic:
-            return os.path.join("/static", "img", "profiles", "2024", self.data.profile_pic)
-        else:
-            return os.path.join("/static", "img", "profiles", "placeholder_face.png")
+        # This has been removed
 
     @property
     def header_image_path(self):
         assert(False)
-        # !TBD: extract the year
-        if self.data.header_image:
-            return os.path.join("/static", "img", "profiles", "2024", self.data.header_image )
-        else:
-            return None
+        # This has been removed
 
 
 @dataclass()
