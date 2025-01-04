@@ -298,3 +298,4 @@ class Schedule:
     days: [Day]
     workshop_groups: [WorkshopGroup] = field(default_factory=list)
     tracks: {} = field(default_factory=dict)
+    sessions_by_slug: {} = field(default_factory=dict)

@@ -8,9 +8,6 @@ from pykyll.utils import format_longdate, dict_merge
 from sessionmodel.Sessions import load_sessions, load_yaml, parse_sessions
 
 schedule = None
-session_by_slug = {}
-reusable_slugs = {}
-
 
 @dataclass
 class ReusableSlug:
@@ -21,13 +18,11 @@ class ReusableSlug:
         return f"{self.slug}-{self.count}"
 
 
-all_speakers = {}
-all_sessions = []
-
-
 class ScheduleBuilder:
     def __init__(self, session_data_by_id: dict):
         self.session_data_by_id = session_data_by_id
+        self.reusable_slugs = {}
+        self.session_by_slug = {}
 
     def read_session_slot(self, index: int, session_slot_entry, times: [Time], live: bool) -> SessionSlot:
         def make_session(session_id: str, times: [Time]) -> Session:
@@ -42,19 +37,19 @@ class ScheduleBuilder:
                 end_time=times[1])
             slug = session.slug
             if session_info.reusable:
-                if (reusable_slug := reusable_slugs.get(slug)) is None:
+                if (reusable_slug := self.reusable_slugs.get(slug)) is None:
                     reusable_slug = ReusableSlug(slug)
-                    reusable_slugs[slug] = reusable_slug
+                    self.reusable_slugs[slug] = reusable_slug
                 reusable_slug.count += 1
                 session._slug = (slug := str(reusable_slug))
-            if slug in session_by_slug:
+            if slug in self.session_by_slug:
                 if session_info.multi:
-                    session = session_by_slug[slug]
+                    session = self.session_by_slug[slug]
                     session.end_time = times[1]
                 else:
                     raise Exception(f"Two sessions have the same slug, '{slug}'")
             else:
-                session_by_slug[slug] = session
+                self.session_by_slug[slug] = session
             return session
 
         if isinstance(session_slot_entry, dict):
@@ -172,11 +167,10 @@ def load_session_data(paths: [str]) -> {str: Session}:
 
 def load_schedule(schedule_path: str | None, session_data_paths: [str], placeholder_profile: str | None = None) -> Schedule | None:
     session_data_by_id = load_session_data(session_data_paths)
-    global all_sessions
-    for s in session_data_by_id.values():
-        all_sessions.append(s)
 
-    for session in all_sessions:
+    all_speakers = {}
+
+    for session in session_data_by_id.values():
         for speaker in session.speakers:
             if speaker.id not in all_speakers:
                 all_speakers[speaker.id] = speaker
@@ -197,7 +191,8 @@ def load_schedule(schedule_path: str | None, session_data_paths: [str], placehol
         room_names=data["room_names"],
         default_header=data.get("default_header"),
         days=builder.read_days(data["days"]),
-        tracks=data.get("tracks") or {} )
+        tracks=data.get("tracks") or {},
+        sessions_by_slug=builder.session_by_slug)
 
     workshops_seen = set()
     workshops = []
