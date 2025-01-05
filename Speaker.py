@@ -18,6 +18,8 @@ class Speaker:
     tint_colour: Colour | None = None
     tint_shade: str | None = None
 
+    is_lead_presenter: bool = True
+
     @property
     def name_in_caps(self):
         return self.name.upper()
