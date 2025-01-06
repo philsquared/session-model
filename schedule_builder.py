@@ -208,6 +208,9 @@ def load_schedule(schedule_path: str | None, session_data_paths: [str], placehol
                             workshops.append(session)
                     if session.data.track:
                         session.track = schedule.tracks[session.data.track]
+                    if speakers := session.data.speakers:
+                        speakers.sort(key=lambda s: not s.is_lead_presenter)
+                        pass
 
     for workshop in workshops:
         date_range = workshop.date_range
