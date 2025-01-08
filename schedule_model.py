@@ -296,6 +296,11 @@ class Schedule:
     room_names: [str]
     default_header: str | None
     days: [Day]
+    tracks: {}
+    sessions_by_slug: {str: Session}
+    speakers_by_id: {str: Speaker}
     workshop_groups: [WorkshopGroup] = field(default_factory=list)
-    tracks: {} = field(default_factory=dict)
-    sessions_by_slug: {} = field(default_factory=dict)
+
+    @property
+    def all_speakers(self) -> [Speaker]:
+        return self.speakers_by_id.values()

@@ -192,7 +192,8 @@ def load_schedule(schedule_path: str | None, session_data_paths: [str], placehol
         default_header=data.get("default_header"),
         days=builder.read_days(data["days"]),
         tracks=data.get("tracks") or {},
-        sessions_by_slug=builder.session_by_slug)
+        sessions_by_slug=builder.session_by_slug,
+        speakers_by_id=all_speakers)
 
     workshops_seen = set()
     workshops = []
