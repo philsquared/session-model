@@ -127,7 +127,7 @@ class Session:
             case 2:
                 return f"{names[0]} & {names[1]}"
             case _:
-                return ", ".join(names[0:-2]) + f" & {names[-1]}"
+                return ", ".join(names[0:-1]) + f" & {names[-1]}"
 
     @property
     def title_prefix(self):
