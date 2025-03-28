@@ -83,6 +83,7 @@ class Session:
     end_time_index = -1
 
     day: list = field(default_factory=list)  # Set after init
+    room: str = "" # Set after init
 
     track: {} = field(default_factory=dict)
     _slug: str = None

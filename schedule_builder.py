@@ -200,9 +200,11 @@ def load_schedule(schedule_path: str | None, session_data_paths: [str], placehol
     for day in schedule.days:
         for timeslot in day.timeslots:
             for session_slots in timeslot.session_slots:
+                room = schedule.room_names[day.rooms[session_slots.index]]
                 for session in session_slots.sessions:
                     session.schedule = schedule
                     session.day.append(day)
+                    session.room = room
                     if session.is_workshop:
                         if session.id not in workshops_seen:
                             workshops_seen.add(session.id)
