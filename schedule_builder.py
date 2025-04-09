@@ -1,7 +1,9 @@
+import os
 from dataclasses import dataclass
 
 import yaml
 
+from glassware.logging import log_info
 from sessionmodel.schedule_model import Session, Timeslot, Schedule, Day, SessionSlot, Time, WorkshopGroup
 from pykyll.markdown import render_markdown
 from pykyll.utils import format_longdate, dict_merge
@@ -226,6 +228,23 @@ def load_schedule(schedule_path: str | None, session_data_paths: [str], placehol
 
     _schedules[str(year)] = schedule
     return schedule
+
+
+def load_schedule_for_year(data_root: str, year: str):
+    log_info(f"Loading {year} schedule")
+
+    session_data_paths = [
+        os.path.join(data_root, path)
+        for path in [
+            "fixed_session_data.yml",
+            f"{year}/session_data.yml",
+            f"{year}/session_data_overrides.yml",
+        ]]
+
+    load_schedule(
+        schedule_path=os.path.join(data_root, f"{year}/schedule.yml"),
+        session_data_paths=session_data_paths)
+    log_info("Loaded")
 
 
 def get_schedule(year: int) -> Schedule:
