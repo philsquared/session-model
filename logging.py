@@ -1,3 +1,8 @@
+def log_info(*args, **kwargs):
+    try:
+        from glassware.logging import log_info
+    except:
+        pass
 
 def log_error(*args, **kwargs):
     try:

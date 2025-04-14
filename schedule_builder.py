@@ -3,11 +3,10 @@ from dataclasses import dataclass
 
 import yaml
 
-from glassware.logging import log_info
+from sessionmodel.logging import log_info
 from sessionmodel.schedule_model import Session, Timeslot, Schedule, Day, SessionSlot, Time, WorkshopGroup
-from pykyll.markdown import render_markdown
 from pykyll.utils import format_longdate, dict_merge
-from sessionmodel.Sessions import load_sessions, load_yaml, parse_sessions
+from sessionmodel.Sessions import load_yaml, parse_sessions
 
 _schedules = {}
 
