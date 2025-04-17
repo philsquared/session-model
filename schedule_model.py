@@ -96,15 +96,15 @@ class Session:
 
     @property
     def is_break(self) -> bool:
-        return self.data.type == "break"
+        return self.data.is_break
 
     @property
     def is_keynote(self) -> bool:
-        return self.data.type == "keynote"
+        return self.data.is_keynote
 
     @property
     def is_sponsored(self) -> bool:
-        return self.data.type == "sponsored"
+        return self.data.is_sponsored
 
     @property
     def duration_in_minutes(self):
@@ -119,16 +119,7 @@ class Session:
 
     @property
     def speaker_names(self):
-        names = [s.name for s in self.data.speakers]
-        match len(names):
-            case 0:
-                return ""
-            case 1:
-                return names[0]
-            case 2:
-                return f"{names[0]} & {names[1]}"
-            case _:
-                return ", ".join(names[0:-1]) + f" & {names[-1]}"
+        return self.data.speaker_names
 
     @property
     def title_prefix(self):
@@ -157,24 +148,20 @@ class Session:
     @property
     def slug(self):
         if not self._slug:
-            if self.data.slug:
-                self._slug = self.data.slug
-            else:
-                self._slug = slugify(self.data.title)
+            self._slug = slugify(self.data.title)
         return self._slug
 
     @property
     def abstract_as_html(self) -> str:
-        return render_markdown(self.data.abstract, linkify=True, clean=True, strip_outer_p_tag=True)
+        return self.data.abstract_as_html
 
     @property
     def outline_as_html(self) -> str:
-        return render_markdown(self.data.outline, linkify=True, clean=True, strip_outer_p_tag=True)
+        return self.data.outline_as_html
 
     @property
     def short_abstract_as_html(self) -> str:
-        html = render_markdown(self.data.abstract, linkify=True, clean=True, strip_outer_p_tag=True)
-        return make_description(html)
+        return self.data.short_abstract_as_html
 
     @property
     def speakers(self):
@@ -299,6 +286,7 @@ class Schedule:
     days: [Day]
     tracks: {}
     sessions_by_slug: {str: Session}
+    all_sessions_by_id: {str: Session}
     speakers_by_id: {str: Speaker}
     workshop_groups: [WorkshopGroup] = field(default_factory=list)
 

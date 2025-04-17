@@ -36,6 +36,7 @@ class ScheduleBuilder:
                 data=session_info,
                 start_time=times[0],
                 end_time=times[1])
+            session_info.scheduled = True
             slug = session.slug
             if session_info.reusable:
                 if (reusable_slug := self.reusable_slugs.get(slug)) is None:
@@ -194,6 +195,7 @@ def load_schedule(schedule_path: str | None, session_data_paths: [str], placehol
         days=builder.read_days(data["days"]),
         tracks=data.get("tracks") or {},
         sessions_by_slug=builder.session_by_slug,
+        all_sessions_by_id=session_data_by_id,
         speakers_by_id=all_speakers)
 
     workshops_seen = set()
