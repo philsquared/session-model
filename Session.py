@@ -23,7 +23,7 @@ class Session:
     slug: str | None = None
     header_image: str | None = None
     track: str | None = None
-    scheduled: bool = False
+    _scheduled: bool = False
 
     @property
     def is_workshop(self) -> bool:

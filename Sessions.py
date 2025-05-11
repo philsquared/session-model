@@ -12,7 +12,7 @@ from sessionmodel.Speaker import Speaker
 
 def _sessions_to_dict(sessions: [Session]) -> list:
     def null_filter_factory(data: list):
-        return dict(x for x in data if x[1] is not None)
+        return dict(x for x in data if x[1] is not None and not x[0].startswith("_"))
     return [asdict(session, dict_factory=null_filter_factory) for session in sessions]
 
 
