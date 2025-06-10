@@ -24,6 +24,7 @@ class Session:
     header_image: str | None = None
     track: str | None = None
     _scheduled: bool = False
+    sponsor: str | None = None
 
     @property
     def is_workshop(self) -> bool:
