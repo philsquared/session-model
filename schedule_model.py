@@ -281,15 +281,15 @@ class WorkshopGroup:
 @dataclass
 class Schedule:
     year: int
-    room_names: [str]
+    room_names: list[str]
     default_header: str | None
-    days: [Day]
-    tracks: {}
-    sessions_by_slug: {str: Session}
-    all_sessions_by_id: {str: Session}
-    speakers_by_id: {str: Speaker}
-    workshop_groups: [WorkshopGroup] = field(default_factory=list)
+    days: list[Day]
+    tracks: dict
+    sessions_by_slug: dict[str, Session]
+    all_sessions_by_id: dict[str, Session]
+    speakers_by_id: dict[str, Speaker]
+    workshop_groups: list[WorkshopGroup] = field(default_factory=list)
 
     @property
-    def all_speakers(self) -> [Speaker]:
+    def all_speakers(self) -> list[Speaker]:
         return self.speakers_by_id.values()

@@ -249,4 +249,16 @@ def load_schedule_for_year(data_root: str, year: str):
 
 
 def get_schedule(year: int) -> Schedule:
-    return _schedules[str(year)]
+    if schedule := _schedules.get(str(year)):
+        return schedule
+    empty_schedule = Schedule(
+        year=year,
+        room_names=[],
+        default_header=None,
+        days=[],
+        tracks={},
+        sessions_by_slug={},
+        all_sessions_by_id={},
+        speakers_by_id={})
+    _schedules[str(year)] = empty_schedule
+    return empty_schedule
