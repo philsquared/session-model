@@ -1,3 +1,4 @@
+import datetime
 import os
 from dataclasses import dataclass
 
@@ -118,6 +119,8 @@ class ScheduleBuilder:
         days = []
         for data in day_data:
             date = data["date"]
+            if isinstance(date, str):
+                date = datetime.datetime.strptime(date, "%Y-%m-%d").date()
             day_num = data["day_num"]
             day = Day(
                 rooms=data["rooms"],
