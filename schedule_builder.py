@@ -221,14 +221,17 @@ def load_schedule(schedule_path: str | None, session_data_paths: [str], placehol
                         if len(speakers) > 1:
                             speakers.sort(key=lambda s: s.id != session.data.lead_presenter)
 
+    workshop_groups = {}
     for workshop in workshops:
         date_range = workshop.date_range
-        if not schedule.workshop_groups or schedule.workshop_groups[-1].date_range != date_range:
-            group = WorkshopGroup(workshop.day[0].alt_label, date_range, [])
-            schedule.workshop_groups.append(group)
-        else:
-            group = schedule.workshop_groups[-1]
-        group.workshops.append(workshop)
+        if date_range not in workshop_groups:
+            workshop_groups[date_range] = []
+        workshop_groups[date_range].append(workshop)
+    for date_range, grouped_workshops in workshop_groups.items():
+        group = WorkshopGroup(grouped_workshops[0].day[0].alt_label, date_range, [])
+        schedule.workshop_groups.append(group)
+        for workshop in grouped_workshops:
+            group.workshops.append(workshop)
 
     _schedules[str(year)] = schedule
     return schedule
