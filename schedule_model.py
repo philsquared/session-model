@@ -58,16 +58,6 @@ class Speaker:
     def bio_as_html(self):
         return render_markdown(self.data.bio, clean=True, strip_outer_p_tag=True, linkify=True)
 
-    @property
-    def profile_pic_path(self):
-        assert(False)
-        # This has been removed
-
-    @property
-    def header_image_path(self):
-        assert(False)
-        # This has been removed
-
 
 @dataclass()
 class Session:
@@ -85,7 +75,7 @@ class Session:
     day: list = field(default_factory=list)  # Set after init
     room: str = "" # Set after init
 
-    track: {} = field(default_factory=dict)
+    track: dict = field(default_factory=dict)
     _slug: str = None
 
     schedule: Any = None
@@ -226,8 +216,8 @@ class Session:
 @dataclass
 class SessionSlot:
     index: int
-    sessions: [Session]
-    times: [Time]
+    sessions: list[Session]
+    times: list[Time]
     start_time_index: int = 0
     end_time_index: int = 1
 
@@ -237,9 +227,9 @@ class SessionSlot:
 
 @dataclass
 class Timeslot:
-    times: [Time]
+    times: list[Time]
     type: str
-    session_slots: [SessionSlot]
+    session_slots: list[SessionSlot]
 
     @cached_property
     def has_speakers(self):
@@ -256,26 +246,26 @@ class Timeslot:
 
 @dataclass
 class Day:
-    rooms: [int]
+    rooms: list[int]
 
     # Day/ date in various formats
     day_num: int
     day: str
     date: datetime.date
-    date_components: [int]
+    date_components: list[int]
     date_str: str
 
     type: str
     label: str
     alt_label: str
-    timeslots: [Timeslot]
+    timeslots: list[Timeslot]
 
 
 @dataclass
 class WorkshopGroup:
     name: str
     date_range: str
-    workshops: [Session]
+    workshops: list[Session]
 
 
 @dataclass
@@ -292,4 +282,4 @@ class Schedule:
 
     @property
     def all_speakers(self) -> list[Speaker]:
-        return self.speakers_by_id.values()
+        return list(self.speakers_by_id.values())
