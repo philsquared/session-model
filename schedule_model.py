@@ -220,6 +220,7 @@ class SessionSlot:
     times: list[Time]
     start_time_index: int = 0
     end_time_index: int = 1
+    is_island_session: bool = False # A session that starts and ends within a trackless timeslot
 
     @property
     def is_single(self):
@@ -243,6 +244,10 @@ class Timeslot:
     def is_trackless(self):
         return len(self.session_slots) == 1
 
+    @property
+    def is_trackless_with_islands(self):
+        return len([slot for slot in self.session_slots if not slot.is_island_session]) == 1
+    
 
 @dataclass
 class Day:

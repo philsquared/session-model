@@ -76,10 +76,10 @@ class ScheduleBuilder:
 
         return SessionSlot(index, sessions=sessions, times=all_times)
 
-    def read_session_slots(self, session_slot_data, times: [Time], live_data: [int]) -> [SessionSlot]:
+    def read_session_slots(self, session_slot_data, times: list[Time], live_data: list[int]) -> list[SessionSlot]:
         return [self.read_session_slot(index, data, times, live == 1) for index, (data, live) in enumerate(zip(session_slot_data, live_data))]
 
-    def read_timeslots(self, timeslot_data: [dict]) -> [Timeslot]:
+    def read_timeslots(self, timeslot_data: list[dict]) -> list[Timeslot]:
         timeslots = []
         for time_num, data in enumerate(timeslot_data):
             sessions_data = data["sessions"]
@@ -95,9 +95,11 @@ class ScheduleBuilder:
                         times.add(s.end_time)
             times = list(times)
             times.sort()
+            last_time_index = len(times) - 1
             for rs in session_slots:
                 rs.start_time_index = times.index(rs.times[0])
                 rs.end_time_index = times.index(rs.times[-1])
+                is_island_session = None
                 for s in rs.sessions:
                     try:
                         s.start_time_index = times.index(s.start_time)
@@ -106,7 +108,11 @@ class ScheduleBuilder:
                     try:
                         s.end_time_index = times.index(s.end_time)
                     except:
-                        s.end_time_index = len(times)-1
+                        s.end_time_index = last_time_index
+                    s.is_island_session = s.start_time_index > 0 and s.end_time_index < last_time_index
+                    if is_island_session is None or is_island_session == True:
+                        is_island_session = s.is_island_session
+                rs.is_island_session = is_island_session or False
             timeslot = Timeslot(
                 times=times,
                 type=data.get("type") or "sessions",
@@ -115,7 +121,7 @@ class ScheduleBuilder:
             timeslots.append(timeslot)
         return timeslots
 
-    def read_days(self, day_data) -> [Day]:
+    def read_days(self, day_data) -> list[Day]:
         days = []
         for data in day_data:
             date = data["date"]
@@ -137,7 +143,7 @@ class ScheduleBuilder:
             for timeslot in day.timeslots:
                 session_count = len(timeslot.session_slots)
                 room_count = len(day.rooms)
-                if session_count > 1 and session_count != room_count:
+                if not timeslot.is_trackless_with_islands and session_count != room_count:
                     raise Exception(f"Mismatch between number of rooms on {day.day} ({room_count}) and number of sessions at {timeslot.times[0]} ({session_count})")
 
             days.append(day)
