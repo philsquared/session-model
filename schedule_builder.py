@@ -36,7 +36,8 @@ class ScheduleBuilder:
                 live=live,
                 data=session_info,
                 start_time=times[0],
-                end_time=times[1])
+                end_time=times[1],
+                _slug=session_info.slug)
             session_info.scheduled = True
             slug = session.slug
             if session_info.reusable:
