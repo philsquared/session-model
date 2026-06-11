@@ -102,6 +102,8 @@ class Session:
 
     @property
     def length_description(self):
+        if self.data.length is None:
+            return ""
         if self.data.length.isnumeric():
             return f"{self.data.length} minute {self.data.type}"
         else:
